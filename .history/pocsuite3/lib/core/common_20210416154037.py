@@ -965,9 +965,8 @@ def exec_cmd(cmd, raw_data=True):
             shell=False,
             stdout=subprocess.
             PIPE,  # 可被 Popen 的 stdin, stdout 或者 stderr 参数使用的特殊值, 表示打开标准流的管道 
-            stderr=subprocess.
-            STDOUT  # # 可被 Popen 的 stdin ， stdout 或者 stderr 参数使用的特殊值， 表示标准错误与标准输出使用同一句柄
-        )
+            stderr=subprocess.STDOUT
+        )  # 可被 Popen 的 stdin ， stdout 或者 stderr 参数使用的特殊值， 表示标准错误与标准输出使用同一句柄
         while p.poll() is None:  # 检查子进程是否已被终止。
             line = p.stdout.read()  # 此属性是一个类似 open() 返回的可读流
             out_data += line
