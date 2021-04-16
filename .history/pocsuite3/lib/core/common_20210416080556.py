@@ -17,7 +17,7 @@ from ipaddress import ip_address, ip_network
 from platform import machine
 from subprocess import call, Popen, PIPE
 
-import chardet  # 用于检测编码的库，对于未知编码的bytes，要把它转换成str，需要先“猜测”编码。
+import chardet
 import requests
 
 from pocsuite3.lib.core.convert import stdout_encode
@@ -29,11 +29,9 @@ from pocsuite3.lib.core.decorators import cachedmethod
 from pocsuite3.lib.core.enums import OS_ARCH, OS
 from pocsuite3.lib.core.exception import PocsuiteSystemException
 from pocsuite3.lib.core.log import LOGGER_HANDLER
-from pocsuite3.lib.core.settings import (BANNER, BOLD_PATTERNS, IS_WIN,
-                                         URL_DOMAIN_REGEX,
-                                         LOCAL_IP_ADDRESS_REGEX,
-                                         IP_ADDRESS_WITH_PORT_REGEX,
-                                         IPV6_URL_REGEX, TIMESTAMP, OS_SYSTEM)
+from pocsuite3.lib.core.settings import (
+    BANNER, BOLD_PATTERNS, IS_WIN, URL_DOMAIN_REGEX, LOCAL_IP_ADDRESS_REGEX,
+    IP_ADDRESS_WITH_PORT_REGEX, IPV6_URL_REGEX, TIMESTAMP, OS_SYSTEM)
 from pocsuite3.lib.core.settings import IPV6_ADDRESS_REGEX
 from pocsuite3.lib.core.settings import IP_ADDRESS_REGEX
 from pocsuite3.lib.core.settings import OLD_VERSION_CHARACTER
@@ -86,17 +84,13 @@ def set_paths(root_path):
     """
     paths.POCSUITE_ROOT_PATH = root_path
     paths.POCSUITE_DATA_PATH = os.path.join(paths.POCSUITE_ROOT_PATH, "data")
-    paths.POCSUITE_PLUGINS_PATH = os.path.join(paths.POCSUITE_ROOT_PATH,
-                                               "plugins")
+    paths.POCSUITE_PLUGINS_PATH = os.path.join(paths.POCSUITE_ROOT_PATH, "plugins")
     paths.POCSUITE_POCS_PATH = os.path.join(paths.POCSUITE_ROOT_PATH, "pocs")
     paths.USER_POCS_PATH = None
 
-    paths.USER_AGENTS = os.path.join(paths.POCSUITE_DATA_PATH,
-                                     "user-agents.txt")
-    paths.WEAK_PASS = os.path.join(paths.POCSUITE_DATA_PATH,
-                                   "password-top100.txt")
-    paths.LARGE_WEAK_PASS = os.path.join(paths.POCSUITE_DATA_PATH,
-                                         "password-top1000.txt")
+    paths.USER_AGENTS = os.path.join(paths.POCSUITE_DATA_PATH, "user-agents.txt")
+    paths.WEAK_PASS = os.path.join(paths.POCSUITE_DATA_PATH, "password-top100.txt")
+    paths.LARGE_WEAK_PASS = os.path.join(paths.POCSUITE_DATA_PATH, "password-top1000.txt")
 
     paths.POCSUITE_HOME_PATH = os.path.expanduser("~")
     _ = os.path.join(paths.POCSUITE_HOME_PATH, ".pocsuite")
@@ -108,12 +102,9 @@ def set_paths(root_path):
     paths.POCSUITE_CONSOLE_HISTORY = os.path.join(_, "console.hst")
 
     paths.POCSUITE_TMP_PATH = os.path.join(_, "tmp")
-    paths.POCSUITE_RC_PATH = os.path.join(paths.POCSUITE_HOME_PATH,
-                                          ".pocsuiterc")
-    paths.POCSUITE_OUTPUT_PATH = paths.get("POCSUITE_OUTPUT_PATH",
-                                           os.path.join(_, "output"))
-    paths.SHELLCODES_DEV_PATH = os.path.join(paths.POCSUITE_ROOT_PATH,
-                                             "shellcodes", "tools")
+    paths.POCSUITE_RC_PATH = os.path.join(paths.POCSUITE_HOME_PATH, ".pocsuiterc")
+    paths.POCSUITE_OUTPUT_PATH = paths.get("POCSUITE_OUTPUT_PATH", os.path.join(_, "output"))
+    paths.SHELLCODES_DEV_PATH = os.path.join(paths.POCSUITE_ROOT_PATH, "shellcodes", "tools")
 
 
 def banner():
@@ -134,10 +125,9 @@ def set_color(message, bold=False):
         message = message.decode(UNICODE_ENCODING)
     ret = message
 
-    if message and getattr(LOGGER_HANDLER, "is_tty",
-                           False):  # colorizing handler
+    if message and getattr(LOGGER_HANDLER, "is_tty", False):  # colorizing handler
         if bold:
-            ret = colored(message, color=None, on_color=None, attrs=("bold", ))
+            ret = colored(message, color=None, on_color=None, attrs=("bold",))
 
     return ret
 
@@ -205,14 +195,10 @@ def get_latest_revision():
     """
 
     ret = None
-    resp = requests.get(
-        url=
-        "https://raw.githubusercontent.com/knownsec/pocsuite3/master/pocsuite3/__init__.py"
-    )
+    resp = requests.get(url="https://raw.githubusercontent.com/knownsec/pocsuite3/master/pocsuite3/__init__.py")
     try:
         content = resp.content
-        ret = extract_regex_result(
-            r"__version__\s*=\s*[\"'](?P<result>[\d.]+)", content)
+        ret = extract_regex_result(r"__version__\s*=\s*[\"'](?P<result>[\d.]+)", content)
     except Exception:
         pass
 
@@ -235,12 +221,9 @@ def poll_process(process, suppress_errors=False):
                 if return_code == 0:
                     data_to_stdout(" done\n")
                 elif return_code < 0:
-                    data_to_stdout(" process terminated by signal {}\n".format(
-                        return_code))
+                    data_to_stdout(" process terminated by signal {}\n".format(return_code))
                 elif return_code > 0:
-                    data_to_stdout(
-                        " quit unexpectedly with return code {}\n".format(
-                            return_code))
+                    data_to_stdout(" quit unexpectedly with return code {}\n".format(return_code))
 
             break
 
@@ -254,8 +237,7 @@ def parse_target_url(url):
     if conf.ipv6 and is_ipv6_address_format(url):
         ret = "[" + ret + "]"
 
-    if not re.search("^http[s]*://", ret, re.I) and not re.search(
-            "^ws[s]*://", ret, re.I):
+    if not re.search("^http[s]*://", ret, re.I) and not re.search("^ws[s]*://", ret, re.I):
         if re.search(":443[/]*$", ret):
             ret = "https://" + ret
         else:
@@ -349,11 +331,7 @@ def extract_cookies(cookie):
     return cookies
 
 
-def get_file_items(filename,
-                   comment_prefix='#',
-                   unicode_=True,
-                   lowercase=False,
-                   unique=False):
+def get_file_items(filename, comment_prefix='#', unicode_=True, lowercase=False, unique=False):
     ret = list() if not unique else OrderedDict()
 
     check_file(filename)
@@ -388,8 +366,7 @@ def get_file_items(filename,
 
     except (IOError, OSError, MemoryError) as ex:
         err_msg = "something went wrong while trying "
-        err_msg += "to read the content of file '{0}' ('{1}')".format(
-            filename, ex)
+        err_msg += "to read the content of file '{0}' ('{1}')".format(filename, ex)
         raise PocsuiteSystemException(err_msg)
 
     return ret if not unique else ret.keys()
@@ -466,8 +443,7 @@ def get_public_type_members(type_, only_values=False):
 
 def is_local_ip(ip_string):
     ret = False
-    if ip_string and isinstance(ip_string, str) and re.match(
-            LOCAL_IP_ADDRESS_REGEX, ip_string):
+    if ip_string and isinstance(ip_string, str) and re.match(LOCAL_IP_ADDRESS_REGEX, ip_string):
         ret = True
     return ret
 
@@ -571,9 +547,7 @@ def get_objective_code(asm_file, target_arch, debug=0):
             if debug:
                 print("app: '%s' found at %s" % (app, find_app))
         else:
-            print(
-                "You must install app: '%s' and maybe edit environment variables path to it"
-                % app)
+            print("You must install app: '%s' and maybe edit environment variables path to it" % app)
             return None
     elif OS_SYSTEM == OS.LINUX:
         find_app = app
@@ -613,9 +587,7 @@ def objdump(obj_file, os_target_arch, debug=0):
                 if debug:
                     print("app: '%s' found at %s" % (app, find_app))
             else:
-                print(
-                    "You must install app: '%s' and maybe edit environment variables path to it"
-                    % app)
+                print("You must install app: '%s' and maybe edit environment variables path to it" % app)
                 return None
         elif OS_SYSTEM == OS.LINUX:
             find_app = app
@@ -624,16 +596,9 @@ def objdump(obj_file, os_target_arch, debug=0):
             return None
 
         if os_target_arch == OS_ARCH.X86:
-            p = Popen(['%s' % find_app, '-d', obj_file],
-                      stdout=PIPE,
-                      stderr=PIPE)
+            p = Popen(['%s' % find_app, '-d', obj_file], stdout=PIPE, stderr=PIPE)
         elif os_target_arch == OS_ARCH.X64:
-            p = Popen([
-                '%s' % find_app, '-d', obj_file,
-                '--disassembler-options=addr64'
-            ],
-                      stdout=PIPE,
-                      stderr=PIPE)
+            p = Popen(['%s' % find_app, '-d', obj_file, '--disassembler-options=addr64'], stdout=PIPE, stderr=PIPE)
         else:
             print("OS TARGET ARCH '%s' is not supported" % os_target_arch)
             return
@@ -654,19 +619,12 @@ def objdump(obj_file, os_target_arch, debug=0):
     return res
 
 
-def create_shellcode(asm_code,
-                     os_target,
-                     os_target_arch,
-                     make_exe=0,
-                     debug=0,
-                     filename="",
-                     dll_inj_funcs=[]):
+def create_shellcode(asm_code, os_target, os_target_arch, make_exe=0, debug=0, filename="", dll_inj_funcs=[]):
     if os_target == OS.LINUX:
         dll_inj_funcs = []
     if not is_os_64bit() and os_target_arch == OS_ARCH.X64:
-        print(
-            "ERR: can not create shellcode for this os_target_arch ({0}) on os_arch ({1})"
-            .format(os_target_arch, OS_ARCH.X64))
+        print("ERR: can not create shellcode for this os_target_arch ({0}) on os_arch ({1})".format(os_target_arch,
+                                                                                                    OS_ARCH.X64))
         return None
     asm_file = write_file(asm_code, '.asm', filename)
     obj_file = get_objective_code(asm_file, os_target_arch, debug)
@@ -681,13 +639,11 @@ def create_shellcode(asm_code,
     if make_exe:
         make_binary_from_obj(obj_file, os_target, os_target_arch, debug)
     if dll_inj_funcs:
-        generate_dll(os_target, os_target_arch, asm_code, filename,
-                     dll_inj_funcs, debug)
+        generate_dll(os_target, os_target_arch, asm_code, filename, dll_inj_funcs, debug)
     return shellcode, asm_file.split(".")[0]
 
 
-def generate_dll(os_target, os_target_arch, asm_code, filename, dll_inj_funcs,
-                 debug):
+def generate_dll(os_target, os_target_arch, asm_code, filename, dll_inj_funcs, debug):
     asm_code = asm_code.replace("global _start", "").replace("_start:", "")
     additional_code = ""
     for func in dll_inj_funcs:
@@ -700,11 +656,7 @@ def generate_dll(os_target, os_target_arch, asm_code, filename, dll_inj_funcs,
     make_binary_from_obj(obj_file, os_target, os_target_arch, debug, True)
 
 
-def make_binary_from_obj(o_file,
-                         os_target,
-                         os_target_arch,
-                         debug=0,
-                         is_dll=False):
+def make_binary_from_obj(o_file, os_target, os_target_arch, debug=0, is_dll=False):
     """
         Function for test shellcode with app written on c-language
     """
@@ -724,9 +676,7 @@ def make_binary_from_obj(o_file,
             if debug:
                 print("app: '%s' found at %s" % (app, find_app))
         else:
-            print(
-                "You must install app: '%s' and maybe edit environment variables path to it"
-                % app)
+            print("You must install app: '%s' and maybe edit environment variables path to it" % app)
             return None
     elif OS_SYSTEM == OS.LINUX:
         find_app = app
@@ -856,12 +806,9 @@ def index_modules() -> list:
 
     modules = []
     for root, dirs, files in os.walk(paths.POCSUITE_POCS_PATH):
-        _, package, root = root.rpartition("pocsuite3/pocs/".replace(
-            "/", os.sep))
-        files = filter(lambda x: not x.startswith("__") and x.endswith(".py"),
-                       files)
-        modules.extend(
-            map(lambda x: os.sep.join((root, os.path.splitext(x)[0])), files))
+        _, package, root = root.rpartition("pocsuite3/pocs/".replace("/", os.sep))
+        files = filter(lambda x: not x.startswith("__") and x.endswith(".py"), files)
+        modules.extend(map(lambda x: os.sep.join((root, os.path.splitext(x)[0])), files))
 
     return modules
 
@@ -896,6 +843,7 @@ def module_required(fn):
     Decorator that checks if any module is activated
     before executing command specific to modules (ex. 'run').
     """
+
     @wraps(fn)
     def wrapper(self, *args, **kwargs):
         if not self.current_module:
@@ -926,6 +874,7 @@ def stop_after(space_number):
     :param space_number: number of spaces (' ') after which tab-completion should stop
     :return:
     """
+
     def _outer_wrapper(wrapped_function):
         @wraps(wrapped_function)
         def _wrapper(self, *args, **kwargs):
@@ -957,15 +906,14 @@ def check_port(ip, port):
 
 
 def exec_cmd(cmd, raw_data=True):
-    cmd = shlex.split(cmd)  # 按照shell语法切分
+    cmd = shlex.split(cmd)
     out_data = b''
     try:
-        p = subprocess.Popen(cmd,
-                             shell=False,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT)
-        while p.poll() is None:  # 检查子进程是否已被终止。
-            line = p.stdout.read()  # 此属性是一个类似 open() 返回的可读流
+        p = subprocess.Popen(
+            cmd, shell=False, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT)
+        while p.poll() is None:
+            line = p.stdout.read()
             out_data += line
     except Exception as ex:
         logger.error("Execute cmd error {}".format(str(ex)))
@@ -994,13 +942,15 @@ def desensitization(s):
     """ Hide sensitive information.
     """
     s = str(s)
-    return (s[:len(s) // 4 if len(s) < 30 else 8] + '***' +
-            s[len(s) * 3 // 4:])
+    return (
+            s[:len(s) // 4 if len(s) < 30 else 8] +
+            '***' +
+            s[len(s) * 3 // 4:]
+    )
 
 
 def encoder_bash_payload(cmd: str) -> str:
-    ret = "bash -c '{echo,%s}|{base64,-d}|{bash,-i}'" % base64.b64encode(
-        cmd.encode()).decode()
+    ret = "bash -c '{echo,%s}|{base64,-d}|{bash,-i}'" % base64.b64encode(cmd.encode()).decode()
     return ret
 
 

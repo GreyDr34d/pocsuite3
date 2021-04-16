@@ -41,8 +41,7 @@ class BaseInterpreter(object):
 
         :return:
         """
-        auto_completion(completion=AUTOCOMPLETE_TYPE.CONSOLE,
-                        console=self.complete)
+        auto_completion(completion=AUTOCOMPLETE_TYPE.CONSOLE, console=self.complete)
 
     def parse_line(self, line):
         """ Split line into command and argument.
@@ -50,12 +49,10 @@ class BaseInterpreter(object):
         :param line: line to parse
         :return: (command, argument)
         """
-        command, _, arg = line.strip().partition(
-            " "
-        )  # 返回一个 3 元组，其中包含分隔符之前的部分、分隔符本身，以及分隔符之后的部分。 如果分隔符未找到，则返回的 3 元组中包含字符本身以及两个空字符串
+        command, _, arg = line.strip().partition(" ")
         return command, arg.strip()
 
-    @property  # @property是python的一种装饰器，是用来修饰方法的。我们可以使用@property装饰器来创建只读属性，@property装饰器会将方法转换为相同名称的只读属性,可以与所定义的属性配合使用，这样可以防止属性被修改。
+    @property
     def prompt(self):
         """ Returns prompt string """
         return ">>>"
@@ -67,17 +64,14 @@ class BaseInterpreter(object):
         :return: command_handler
         """
         try:
-            command_handler = getattr(
-                self, "command_{}".format(command))  # 获取命令对应的处理函数
+            command_handler = getattr(self, "command_{}".format(command))
         except AttributeError:
             cmd = self.input_command + ' ' + self.input_args
-            for line in exec_cmd(cmd=cmd):  # 执行shell命令
+            for line in exec_cmd(cmd=cmd):
                 result_encoding = chardet.detect(line)['encoding']
                 if result_encoding:
                     print(line.decode(result_encoding))
-            raise PocsuiteBaseException(
-                "Pocsuite3 Unknown this command, and run it on system: '{}'".
-                format(command))
+            raise PocsuiteBaseException("Pocsuite3 Unknown this command, and run it on system: '{}'".format(command))
 
         return command_handler
 
@@ -86,8 +80,7 @@ class BaseInterpreter(object):
 
         while True:
             try:
-                self.input_command, self.input_args = self.parse_line(
-                    input(self.prompt))
+                self.input_command, self.input_args = self.parse_line(input(self.prompt))
                 command = self.input_command.lower()
                 if not command:
                     continue
@@ -127,8 +120,7 @@ class BaseInterpreter(object):
             else:
                 complete_function = self.raw_command_completer
 
-            self.completion_matches = complete_function(
-                text, line, start_index, end_index)
+            self.completion_matches = complete_function(text, line, start_index, end_index)
 
         try:
             return self.completion_matches[state]
@@ -141,17 +133,11 @@ class BaseInterpreter(object):
         :param ignored:
         :return: full list of interpreter commands
         """
-        return [
-            command.rsplit("_").pop() for command in dir(self)
-            if command.startswith("command_")
-        ]
+        return [command.rsplit("_").pop() for command in dir(self) if command.startswith("command_")]
 
     def raw_command_completer(self, text, line, start_index, end_index):
         """ Complete command w/o any argument """
-        return [
-            command for command in self.suggested_commands()
-            if command.startswith(text)
-        ]
+        return [command for command in self.suggested_commands() if command.startswith(text)]
 
     def default_completer(self, *ignored):
         return []
@@ -192,39 +178,36 @@ class PocsuiteInterpreter(BaseInterpreter):
         self.raw_prompt_template = None
         self.module_prompt_template = None
         self.prompt_hostname = "Pocsuite3"
-        self.show_sub_commands = ("info", "options", "ip", "all")
+        self.show_sub_commands = (
+            "info", "options", "ip", "all")
 
-        self.global_commands = sorted(
-            ["use ", "help", "exit", "show ", "search ", "clear"])
+        self.global_commands = sorted(["use ", "help", "exit", "show ", "search ", "clear"])
         self.module_commands = ["run", "back", "set ", "setg ", "check"]
         self.module_commands.extend(self.global_commands)
         self.module_commands.sort()
 
-        self.modules = index_modules()  # 返回所有exp
+        self.modules = index_modules()
         self.modules_count = len(self.modules)
         # init
         conf.console_mode = True
-        banner()  # 打印banner
+        banner()
         logger.info("Load Pocs :{}".format(self.modules_count))
 
         self.last_search = []
         self.last_ip = []
         self.main_modules_dirs = []
-        for module in self.modules:  # windows下的处理
+        for module in self.modules:
             temp_module = module
             if IS_WIN:
                 temp_module = temp_module.replace("/", "\\")
-                temp_module = temp_module.replace(paths.POCSUITE_ROOT_PATH,
-                                                  "").lstrip("\\")
-            temp_module = temp_module.replace(
-                paths.POCSUITE_ROOT_PATH,
-                "").lstrip("/")  # 返回原字符串的副本，移除其中的前导字符。此处为 /
+                temp_module = temp_module.replace(paths.POCSUITE_ROOT_PATH, "").lstrip("\\")
+            temp_module = temp_module.replace(paths.POCSUITE_ROOT_PATH, "").lstrip("/")
             self.main_modules_dirs.append(temp_module)
 
         self.__parse_prompt()
 
     def __parse_prompt(self):
-        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "  # shell终端颜色格式设置
+        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "
         self.raw_prompt_template = raw_prompt_default_template
         module_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 (\001\033[91m\002{module}\001\033[0m\002) > "
         self.module_prompt_template = module_prompt_default_template
@@ -243,11 +226,10 @@ class PocsuiteInterpreter(BaseInterpreter):
         """
         if self.current_module:
             try:
-                return self.module_prompt_template.format(
-                    host=self.prompt_hostname, module=self.module_metadata)
+                return self.module_prompt_template.format(host=self.prompt_hostname,
+                                                          module=self.module_metadata)
             except (AttributeError, KeyError):
-                return self.module_prompt_template.format(
-                    host=self.prompt_hostname, module="UnnamedModule")
+                return self.module_prompt_template.format(host=self.prompt_hostname, module="UnnamedModule")
         else:
             return self.raw_prompt_template.format(host=self.prompt_hostname)
 
@@ -257,8 +239,7 @@ class PocsuiteInterpreter(BaseInterpreter):
         if not hasattr(self, func):
             logger.warning("Unknown 'show' sub-command '{}'. "
                            "What do you want to show?\n"
-                           "Possible choices are: {}".format(
-                               sub_command, self.show_sub_commands))
+                           "Possible choices are: {}".format(sub_command, self.show_sub_commands))
             return
         getattr(self, func)(*args, **kwargs)
 
@@ -303,8 +284,7 @@ class PocsuiteInterpreter(BaseInterpreter):
         keyword = args[0]
 
         if not keyword:
-            logger.warning(
-                "Please specify search keyword. e.g. 'search wordpress'")
+            logger.warning("Please specify search keyword. e.g. 'search wordpress'")
             return
 
         tb = prettytable.PrettyTable()
@@ -318,8 +298,7 @@ class PocsuiteInterpreter(BaseInterpreter):
 
         index = 0
         for s, k in search_result:
-            tb.add_row(
-                [index, "{}\033[31m{}\033[0m{}".format(*s.partition(k))])
+            tb.add_row([index, "{}\033[31m{}\033[0m{}".format(*s.partition(k))])
             index = index + 1
 
         self.last_search = [i for i, j in search_result]
@@ -344,9 +323,8 @@ class PocsuiteInterpreter(BaseInterpreter):
         try:
             load_file_to_module(module_path)
             self.current_module = kb.current_poc
-            self.current_module.pocsuite3_module_path = ltrim(
-                rtrim(module_path, ".py"),
-                os.path.join(paths.POCSUITE_ROOT_PATH, ""))
+            self.current_module.pocsuite3_module_path = ltrim(rtrim(module_path, ".py"),
+                                                              os.path.join(paths.POCSUITE_ROOT_PATH, ""))
         except Exception as err:
             logger.error(str(err))
 
@@ -369,7 +347,8 @@ class PocsuiteInterpreter(BaseInterpreter):
             self.current_module.setp_option(key, value)
             logger.info("{} => {}".format(key, value))
         else:
-            logger.error("You can't set option '{}'.".format(key))
+            logger.error("You can't set option '{}'."
+                         .format(key))
 
     def _attack_mode(self, mod):
         """
@@ -388,9 +367,7 @@ class PocsuiteInterpreter(BaseInterpreter):
             scheme = "http"
             if ssl:
                 scheme = "https"
-            target = "{scheme}://{rhost}:{rport}".format(scheme=scheme,
-                                                         rhost=rhost,
-                                                         rport=rport)
+            target = "{scheme}://{rhost}:{rport}".format(scheme=scheme, rhost=rhost, rport=rport)
         conf.mode = mod
         kb.task_queue.put((target, self.current_module))
         try:
@@ -419,8 +396,7 @@ class PocsuiteInterpreter(BaseInterpreter):
 
     @module_required
     def command_check(self, *args, **kwargs):
-        self.current_module.check_requirement(
-            self.current_module.global_options, self.current_module.options)
+        self.current_module.check_requirement(self.current_module.global_options, self.current_module.options)
         # 检测必须参数是否被设置
         self._set_global_conf()
         self._attack_mode("verify")
@@ -432,8 +408,7 @@ class PocsuiteInterpreter(BaseInterpreter):
     @module_required
     def command_attack(self, *args, **kwargs):
         # 检测必须参数是否被设置
-        self.current_module.check_requirement(
-            self.current_module.global_options, self.current_module.options)
+        self.current_module.check_requirement(self.current_module.global_options, self.current_module.options)
         self._set_global_conf()
         self._attack_mode("attack")
 
@@ -443,9 +418,7 @@ class PocsuiteInterpreter(BaseInterpreter):
 
     @module_required
     def command_exploit(self, *args, **kwargs):
-        self.current_module.check_requirement(
-            self.current_module.payload_options,
-            self.current_module.global_options)
+        self.current_module.check_requirement(self.current_module.payload_options, self.current_module.global_options)
         self._set_global_conf()
         conf.connect_back_host = self.current_module.getp_option("lhost")
         conf.connect_back_port = self.current_module.getp_option("lport")
@@ -466,8 +439,7 @@ class PocsuiteInterpreter(BaseInterpreter):
             logger.info("{} => {}".format(key, value))
         else:
             logger.error("You can't set option '{}'.\n"
-                         "Available options: {}".format(
-                             key, self.current_module.options))
+                         "Available options: {}".format(key, self.current_module.options))
 
     def command_list(self, *args, **kwargs):
         # 展现所有可用的poc
@@ -494,11 +466,8 @@ class PocsuiteInterpreter(BaseInterpreter):
 
     @module_required
     def _show_info(self, *args, **kwargs):
-        fields = [
-            "name", "VulID", "version", "author", "vulDate", "createDate",
-            "updateDate", "references", "appPowerLink", "appName",
-            "appVersion", "vulType", "desc"
-        ]
+        fields = ["name", "VulID", "version", "author", "vulDate", "createDate", "updateDate", "references",
+                  "appPowerLink", "appName", "appVersion", "vulType", "desc"]
         msg = ""
         for field in fields:
             value = getattr(self.current_module, field, None)
@@ -518,8 +487,7 @@ class PocsuiteInterpreter(BaseInterpreter):
         module_options = self.current_module.options
         payload_options = self.current_module.payload_options
 
-        tb2 = prettytable.PrettyTable(
-            ["Name", "Current settings", "Type", "Descript"])
+        tb2 = prettytable.PrettyTable(["Name", "Current settings", "Type", "Descript"])
         for name, opt in global_options.items():
             value = opt.value
             if opt.require and value == "":
@@ -530,8 +498,7 @@ class PocsuiteInterpreter(BaseInterpreter):
         data_to_stdout("\n")
 
         if module_options:
-            tb = prettytable.PrettyTable(
-                ["Name", "Current settings", "Type", "Descript"])
+            tb = prettytable.PrettyTable(["Name", "Current settings", "Type", "Descript"])
             # add target option
             for name, opt in module_options.items():
                 value = opt.value
@@ -544,8 +511,7 @@ class PocsuiteInterpreter(BaseInterpreter):
 
         # exploit payload
         if payload_options:
-            tb3 = prettytable.PrettyTable(
-                ["Name", "Current settings", "Type", "Descript"])
+            tb3 = prettytable.PrettyTable(["Name", "Current settings", "Type", "Descript"])
             for name, opt in payload_options.items():
                 value = opt.value
                 if opt.require and value == "":
@@ -561,8 +527,7 @@ class PocsuiteInterpreter(BaseInterpreter):
     def complete_use(self, text, *args, **kwargs):
 
         if text:
-            all_possible_matches = filter(lambda x: x.startswith(text),
-                                          self.main_modules_dirs)
+            all_possible_matches = filter(lambda x: x.startswith(text), self.main_modules_dirs)
 
             matches = set()
             for match in all_possible_matches:
@@ -579,8 +544,7 @@ class PocsuiteInterpreter(BaseInterpreter):
     def complete_show(self, text, *args, **kwargs):
 
         if text:
-            all_possible_matches = filter(lambda x: x.startswith(text),
-                                          self.show_sub_commands)
+            all_possible_matches = filter(lambda x: x.startswith(text), self.show_sub_commands)
             return list(all_possible_matches)
 
         else:
@@ -592,8 +556,7 @@ class PocsuiteInterpreter(BaseInterpreter):
         all_options = self.current_module.get_options().keys()
 
         if text:
-            all_possible_matches = filter(lambda x: x.startswith(text),
-                                          all_options)
+            all_possible_matches = filter(lambda x: x.startswith(text), all_options)
             return list(all_possible_matches)
 
         else:

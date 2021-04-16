@@ -9,9 +9,7 @@ import sys
 try:
     import pocsuite3
 except ImportError:
-    sys.path.append(
-        os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                     os.path.pardir)))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from pocsuite3.cli import check_environment, module_path
 from pocsuite3 import set_paths
 from pocsuite3.lib.core.interpreter import PocsuiteInterpreter
@@ -21,7 +19,7 @@ from pocsuite3.lib.core.option import init_options
 def main():
     check_environment()
     set_paths(module_path())
-    init_options()  # 初始化选项
+    init_options()
     poc = PocsuiteInterpreter()
     poc.start()
 

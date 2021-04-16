@@ -55,7 +55,7 @@ class BaseInterpreter(object):
         )  # 返回一个 3 元组，其中包含分隔符之前的部分、分隔符本身，以及分隔符之后的部分。 如果分隔符未找到，则返回的 3 元组中包含字符本身以及两个空字符串
         return command, arg.strip()
 
-    @property  # @property是python的一种装饰器，是用来修饰方法的。我们可以使用@property装饰器来创建只读属性，@property装饰器会将方法转换为相同名称的只读属性,可以与所定义的属性配合使用，这样可以防止属性被修改。
+    @property
     def prompt(self):
         """ Returns prompt string """
         return ">>>"
@@ -67,11 +67,10 @@ class BaseInterpreter(object):
         :return: command_handler
         """
         try:
-            command_handler = getattr(
-                self, "command_{}".format(command))  # 获取命令对应的处理函数
+            command_handler = getattr(self, "command_{}".format(command))
         except AttributeError:
             cmd = self.input_command + ' ' + self.input_args
-            for line in exec_cmd(cmd=cmd):  # 执行shell命令
+            for line in exec_cmd(cmd=cmd):
                 result_encoding = chardet.detect(line)['encoding']
                 if result_encoding:
                     print(line.decode(result_encoding))
@@ -200,31 +199,30 @@ class PocsuiteInterpreter(BaseInterpreter):
         self.module_commands.extend(self.global_commands)
         self.module_commands.sort()
 
-        self.modules = index_modules()  # 返回所有exp
+        self.modules = index_modules()
         self.modules_count = len(self.modules)
         # init
         conf.console_mode = True
-        banner()  # 打印banner
+        banner()
         logger.info("Load Pocs :{}".format(self.modules_count))
 
         self.last_search = []
         self.last_ip = []
         self.main_modules_dirs = []
-        for module in self.modules:  # windows下的处理
+        for module in self.modules:
             temp_module = module
             if IS_WIN:
                 temp_module = temp_module.replace("/", "\\")
                 temp_module = temp_module.replace(paths.POCSUITE_ROOT_PATH,
                                                   "").lstrip("\\")
-            temp_module = temp_module.replace(
-                paths.POCSUITE_ROOT_PATH,
-                "").lstrip("/")  # 返回原字符串的副本，移除其中的前导字符。此处为 /
+            temp_module = temp_module.replace(paths.POCSUITE_ROOT_PATH,
+                                              "").lstrip("/")
             self.main_modules_dirs.append(temp_module)
 
         self.__parse_prompt()
 
     def __parse_prompt(self):
-        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "  # shell终端颜色格式设置
+        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "
         self.raw_prompt_template = raw_prompt_default_template
         module_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 (\001\033[91m\002{module}\001\033[0m\002) > "
         self.module_prompt_template = module_prompt_default_template

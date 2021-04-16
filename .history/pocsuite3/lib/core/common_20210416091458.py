@@ -17,7 +17,7 @@ from ipaddress import ip_address, ip_network
 from platform import machine
 from subprocess import call, Popen, PIPE
 
-import chardet  # 用于检测编码的库，对于未知编码的bytes，要把它转换成str，需要先“猜测”编码。
+import chardet
 import requests
 
 from pocsuite3.lib.core.convert import stdout_encode
@@ -964,8 +964,8 @@ def exec_cmd(cmd, raw_data=True):
                              shell=False,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT)
-        while p.poll() is None:  # 检查子进程是否已被终止。
-            line = p.stdout.read()  # 此属性是一个类似 open() 返回的可读流
+        while p.poll() is None:
+            line = p.stdout.read()
             out_data += line
     except Exception as ex:
         logger.error("Execute cmd error {}".format(str(ex)))

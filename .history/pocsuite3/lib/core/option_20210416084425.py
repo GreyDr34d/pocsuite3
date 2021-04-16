@@ -548,10 +548,10 @@ def _set_conf_attributes():
     conf.ppt = False
 
 
-def _set_kb_attributes(flush_all=True): 
+def _set_kb_attributes(flush_all=True):
     """
     This function set some needed attributes into the knowledge base
-    singleton. 
+    singleton.
     """
 
     debug_msg = "initializing the knowledge base"
@@ -615,16 +615,16 @@ def _merge_options(input_options, override_options):
 
 def _set_poc_options(input_options):
     for line in input_options.keys():
-        if line not in CMD_PARSE_WHITELIST: # 预定义选项
-            DIY_OPTIONS.append(line) # DIY_OPTIONS自定义选项
+        if line not in CMD_PARSE_WHITELIST:
+            DIY_OPTIONS.append(line)
 
 
 def init_options(input_options=AttribDict(), override_options=False):
     cmd_line_options.update(input_options)
     _set_conf_attributes()  # 初始化配置，conf变量
-    _set_poc_options(input_options) # 设置poc的自定义选项
-    _set_kb_attributes()  # 单例模式设置创建知识库需要的属性
-    _merge_options(input_options, override_options) # 合并选项
+    _set_poc_options(input_options)
+    _set_kb_attributes()
+    _merge_options(input_options, override_options)
     # if check version
     if conf.show_version:
         exit()

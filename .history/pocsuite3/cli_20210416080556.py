@@ -34,7 +34,7 @@ def check_environment():
     except Exception:
         err_msg = "your system does not properly handle non-ASCII paths. "
         err_msg += "Please move the pocsuite's directory to the other location"
-        logger.critical(err_msg) 
+        logger.critical(err_msg)
         raise SystemExit
 
 

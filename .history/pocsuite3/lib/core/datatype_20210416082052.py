@@ -1,10 +1,10 @@
-from collections import OrderedDict  # 有序字典
+from collections import OrderedDict  # 有序词典
 
 
-class AttribDict(OrderedDict):  # 扩展有序字典
+class AttribDict(OrderedDict):
     """
-    AttrDict extends OrderedDict to provide attribute-style access. # 提供属性式访问
-    Items starting with __ or _OrderedDict__ can't be accessed as attributes. # OrderedDict 不支持对对__开头或者_OrderedDict__开头的属性进行访问
+    AttrDict extends OrderedDict to provide attribute-style access.
+    Items starting with __ or _OrderedDict__ can't be accessed as attributes.
     """
     __exclude_keys__ = set()
 

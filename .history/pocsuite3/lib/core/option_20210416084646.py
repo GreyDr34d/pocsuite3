@@ -623,8 +623,8 @@ def init_options(input_options=AttribDict(), override_options=False):
     cmd_line_options.update(input_options)
     _set_conf_attributes()  # 初始化配置，conf变量
     _set_poc_options(input_options) # 设置poc的自定义选项
-    _set_kb_attributes()  # 单例模式设置创建知识库需要的属性
-    _merge_options(input_options, override_options) # 合并选项
+    _set_kb_attributes()  # 单例模式设置
+    _merge_options(input_options, override_options)
     # if check version
     if conf.show_version:
         exit()

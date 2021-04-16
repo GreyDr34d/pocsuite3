@@ -210,21 +210,20 @@ class PocsuiteInterpreter(BaseInterpreter):
         self.last_search = []
         self.last_ip = []
         self.main_modules_dirs = []
-        for module in self.modules:  # windows下的处理
+        for module in self.modules:
             temp_module = module
             if IS_WIN:
                 temp_module = temp_module.replace("/", "\\")
                 temp_module = temp_module.replace(paths.POCSUITE_ROOT_PATH,
                                                   "").lstrip("\\")
-            temp_module = temp_module.replace(
-                paths.POCSUITE_ROOT_PATH,
-                "").lstrip("/")  # 返回原字符串的副本，移除其中的前导字符。此处为 /
+            temp_module = temp_module.replace(paths.POCSUITE_ROOT_PATH,
+                                              "").lstrip("/")
             self.main_modules_dirs.append(temp_module)
 
         self.__parse_prompt()
 
     def __parse_prompt(self):
-        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "  # shell终端颜色格式设置
+        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "
         self.raw_prompt_template = raw_prompt_default_template
         module_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 (\001\033[91m\002{module}\001\033[0m\002) > "
         self.module_prompt_template = module_prompt_default_template

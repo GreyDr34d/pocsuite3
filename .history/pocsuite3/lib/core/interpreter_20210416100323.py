@@ -224,7 +224,7 @@ class PocsuiteInterpreter(BaseInterpreter):
         self.__parse_prompt()
 
     def __parse_prompt(self):
-        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "  # shell终端颜色格式设置
+        raw_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 > "
         self.raw_prompt_template = raw_prompt_default_template
         module_prompt_default_template = "\001\033[4m\002{host}\001\033[0m\002 (\001\033[91m\002{module}\001\033[0m\002) > "
         self.module_prompt_template = module_prompt_default_template

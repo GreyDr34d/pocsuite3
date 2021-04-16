@@ -6,7 +6,7 @@ logger = LOGGER
 
 # object to share within function and classes command
 # line options and settings
-conf = AttribDict() 
+conf = AttribDict()
 
 # Dictionary storing
 # (1)targets, (2)registeredPocs, (3) bruteMode

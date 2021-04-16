@@ -17,7 +17,7 @@ from ipaddress import ip_address, ip_network
 from platform import machine
 from subprocess import call, Popen, PIPE
 
-import chardet  # 用于检测编码的库，对于未知编码的bytes，要把它转换成str，需要先“猜测”编码。
+import chardet
 import requests
 
 from pocsuite3.lib.core.convert import stdout_encode
